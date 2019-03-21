@@ -1,6 +1,7 @@
 package com.example.jsonparsing;
 
 import android.os.AsyncTask;
+import android.util.JsonReader;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -20,6 +21,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     String substr = "";
     String singleParsed = "";
     String dataParsed ="";
+    String co="";
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -40,6 +42,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
             for (int i = 0; i < features.length(); i++) {
                 JSONObject feature = features.getJSONObject(i);
                 JSONObject properties= feature.getJSONObject("properties");
+                //this get the description
                 singleParsed = "Description"+ properties.get("Description") + "\n";
                 substr = singleParsed.substring(singleParsed.indexOf("CASE_SIZE")+19, singleParsed.indexOf("CASE_SIZE")+22)+"\n";
                 // the below part is for the removal of all < and / characters in our case size
@@ -58,9 +61,21 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
                     substr1[b++] ='\0';
                     count--;
                 }
+                //substr is the value for cases
+                substr = String.copyValueOf(substr1);
 
-                String substr2 = String.copyValueOf(substr1);
-                dataParsed = dataParsed+ substr2;
+
+                // lets try to extract the value for location
+                JSONObject geometry = feature.getJSONObject("geometry");
+                JSONArray coordinates = geometry.getJSONArray("coordinates");
+                JSONArray coords1 = coordinates.getJSONArray(0);
+                JSONArray coords2 = coords1.getJSONArray(0);
+
+
+                co = coords2.toString();
+
+
+                dataParsed = dataParsed+ co;
 
 
 
@@ -81,7 +96,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPostExecute (Void aVoid){
             super.onPostExecute(aVoid);
-            MainActivity.data.setText(this.dataParsed);
+            MainActivity.data.setText(this.co);
         }
     }
 
