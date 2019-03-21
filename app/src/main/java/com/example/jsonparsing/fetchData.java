@@ -17,8 +17,9 @@ import java.net.URL;
 
 public class fetchData extends AsyncTask<Void, Void, Void> {
     String data="";
-    String dataParsed = "";
+    String substr = "";
     String singleParsed = "";
+    String dataParsed ="";
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -39,8 +40,29 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
             for (int i = 0; i < features.length(); i++) {
                 JSONObject feature = features.getJSONObject(i);
                 JSONObject properties= feature.getJSONObject("properties");
-                singleParsed = "Description: " + properties.get("Description") + "\n";
-                dataParsed = dataParsed + singleParsed;
+                singleParsed = "Description"+ properties.get("Description") + "\n";
+                substr = singleParsed.substring(singleParsed.indexOf("CASE_SIZE")+19, singleParsed.indexOf("CASE_SIZE")+22)+"\n";
+                // the below part is for the removal of all < and / characters in our case size
+                int length = substr.length();
+                int a, b, count = 0;
+                char []substr1 =substr.toCharArray();
+                for( a =  b =0; a < length; a++){
+                    if ((substr1[a] != '/' )&& (substr1[a] != '<')) {
+                        substr1[b++] = substr1[a];
+                    }  else {
+                        count++;
+                    }
+
+                }
+                while(count>0){
+                    substr1[b++] ='\0';
+                    count--;
+                }
+
+                String substr2 = String.copyValueOf(substr1);
+                dataParsed = dataParsed+ substr2;
+
+
 
             }
 
